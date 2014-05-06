@@ -1,0 +1,12 @@
+<h1>Output</h1>
+<p><%= @text %></p>
+<h2>Entities</h2>
+<% @entities.each_key do |key| %>
+<h3><%= key %></h3>
+<% @entities[key].each do |entity| %>
+<p>
+<a href="<%= entity.link %>"> <%= entity.name %></a> <%= entity.best_guess %>
+</p>
+
+<% end %>
+<% end %>
