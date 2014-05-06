@@ -47,7 +47,7 @@ class AuthorityObject
 	end
 
 	def link
-		"http://viaf.org/viaf/AutoSuggest?query=#{@name}"
+		"http://viaf.org/viaf/#{@viaf_id}"
 	end
 
 	def make_search
@@ -56,6 +56,7 @@ class AuthorityObject
 		response = Net::HTTP.get(uri)
 		j = JSON.parse(response)
 		@best_guess = j['result'][0] if j['result']
+		@viaf_id = @best_guess['viafid'] if @best_guess && @best_guess['viafid']
 	end
 
 	def best_guess
@@ -89,7 +90,7 @@ class Wrapper
 
 	def call(input_file)
 
-		tagged = `java -mx700m -cp "./stanford-ner.jar:" edu.stanford.nlp.ie.crf.CRFClassifier -loadClassifier ./classifiers/english.all.3class.distsim.crf.ser.gz -textFile "#{input_file}" -outputFormat xml`
+		tagged = `java -mx700m -cp "./stanford-ner-2014-01-04.jar:" edu.stanford.nlp.ie.crf.CRFClassifier -loadClassifier ./classifiers/english.all.3class.distsim.crf.ser.gz -textFile "#{input_file}" -outputFormat xml`
 		tagged = "<doc>#{tagged}</doc>"
 		xml = Nokogiri::XML(tagged)
 		entities = {organization: [], person: [], location: []}
